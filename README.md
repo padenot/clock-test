@@ -4,7 +4,7 @@ Linux:
 
 Windows:
 
-> clang-cl.exe main.cpp && a.out
+>  ~/.mozbuild/clang/bin/clang-cl.exe main.cpp && main.exe
 
 macOS:
 
