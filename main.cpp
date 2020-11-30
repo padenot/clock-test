@@ -7,6 +7,30 @@ enum ClockType {
   INCREMENT_AWAKE // the clock increments while the computer is awake
 };
 
+// Windows things
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#include <realtimeapiset.h>
+#pragma comment(lib, "mincore.lib")
+
+uint64_t get_time_ms(ClockType type) {
+  uint64_t rv = 0;
+  ULONGLONG interrupt_time;
+  const uint64_t HNS2MS = 10000;
+  if (type == INCREMENT_SLEEP) {
+    QueryInterruptTime(&interrupt_time);
+  } else if (type == INCREMENT_AWAKE) {
+    if (!QueryUnbiasedInterruptTime(&interrupt_time)) {
+      fprintf(stderr, "QueryUnbiasedInterruptTime error: %lx\n", GetLastError());
+      return 0;
+    }
+  }
+  rv = interrupt_time / HNS2MS;
+  return rv;
+}
+#endif
+
 // Apple things
 #if defined(__APPLE__) && defined(__MACH__)
 #include <time.h>
