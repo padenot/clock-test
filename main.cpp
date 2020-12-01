@@ -38,10 +38,10 @@ uint64_t get_time_ms(ClockType type) {
 uint64_t get_time_ms(ClockType type) {
   uint64_t rv = 0;
   if (type == INCREMENT_SLEEP) {
-    // https://developer.apple.com/documentation/kernel/1462446-mach_absolute_time recommends this
+    // https://developer.apple.com/documentation/kernel/1646199-mach_continuous_time recommends this
     rv = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1e6;
   } else if (type == INCREMENT_AWAKE) {
-    // https://developer.apple.com/documentation/kernel/1646199-mach_continuous_time recommends this
+    // https://developer.apple.com/documentation/kernel/1462446-mach_absolute_time recommends this
     rv = clock_gettime_nsec_np(CLOCK_UPTIME_RAW) / 1e6;
   }
   return rv;
@@ -55,13 +55,13 @@ uint64_t get_time_ms(ClockType type) {
 uint64_t get_time_ms(ClockType type) {
   timespec ts;
   uint64_t rv = 0;
-  if (type == INCREMENT_SLEEP) {
+  if (type == INCREMENT_AWAKE) {
     if (clock_gettime(CLOCK_MONOTONIC, &ts)) {
       perror("clock_gettime (MONOTONIC)");
     }
     rv += ts.tv_sec * 1e3;
     rv += ts.tv_nsec / 1e6;
-  } else if (type == INCREMENT_AWAKE) {
+  } else if (type == INCREMENT_SLEEP) {
     if (clock_gettime(CLOCK_BOOTTIME, &ts)) {
       perror("clock_gettime (BOOTTIME)");
     }
